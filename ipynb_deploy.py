@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 
-SUPERVISOR_CONF = "/etc/supervisor.ipython/{u}.conf"
-NGINX_CONF = "/etc/nginx/conf.d/ipynb/{u}.conf"
+from fabric.api import env, sudo, local
+from fabric.contrib.files import append, exists
+from fabric.operations import put
+from fabric.context_managers import settings
+from fabric.utils import abort
+from IPython.lib import passwd
 
+# supervisor config file location
+SUPERVISOR_CONF = "/etc/supervisor.ipython/{u}.conf"
+
+# template for supervisor config files
 SUPERVISOR_CONF_TEMPLATE = """
 [program:ipynb-{u}]
 command = /usr/local/anaconda/bin/ipython notebook --profile={u}
@@ -13,6 +21,10 @@ redirect_stderr = true
 environment=HOME="/home/{u}"
 """
 
+# nginx config file location
+NGINX_CONF = "/etc/nginx/conf.d/ipynb/{u}.conf"
+
+# template for nginx config files
 NGINX_CONF_TEMPLATE = """
 location  /ipynb/{u}/ {{
 
@@ -33,14 +45,16 @@ location  /ipynb/{u}/ {{
 }}
 """
 
+# ipython notebook config file location
 IPYNB_CONF = "/home/{u}/.ipython/profile_{u}/ipython_notebook_config.py"
 
+# ipython notebook config file location
 IPYNB_CONF_TEMPLATE = """
 # Configuration file for ipython-notebook.
 # auto-generated
 
 c = get_config()
-c.NotebookApp.base_project_url = '/ipynb/{u}/'
+c.NotebookApp.base_url = '/ipynb/{u}/'
 c.NotebookApp.open_browser = False
 c.NotebookApp.base_kernel_url = '/ipynb/{u}/'
 c.NotebookApp.port = {p}
@@ -49,13 +63,6 @@ c.IPKernelApp.pylab = 'inline'
 c.NotebookManager.notebook_dir = u'/home/{u}/Notebooks'
 
 """
-
-from fabric.api import env, sudo, local
-from fabric.contrib.files import append, exists
-from fabric.operations import put
-from fabric.context_managers import settings
-from fabric.utils import abort
-from IPython.lib import passwd
 
 def backup_config(config_file):
     if exists(config_file,use_sudo=True):
