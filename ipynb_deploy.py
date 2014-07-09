@@ -60,7 +60,7 @@ c.NotebookApp.base_kernel_url = '/ipynb/{u}/'
 c.NotebookApp.port = {p}
 c.NotebookApp.password = u'{hpw}'
 c.IPKernelApp.pylab = 'inline'
-c.NotebookManager.notebook_dir = u'/home/{u}/Notebooks'
+c.NotebookManager.notebook_dir = u'/home/{u}/'
 
 """
 
@@ -73,8 +73,7 @@ def user_config(username,port):
         # append anaconda path to .bashrc
         append('/home/%s/.bashrc' % username,'export PATH=/usr/local/anaconda/bin:$PATH',use_sudo=True)
 
-        # create notebook dir
-        sudo('mkdir /home/%s/Notebooks' % username)
+        # create log dir
         sudo('mkdir /home/%s/logs' % username)    
         sudo('touch /home/%s/logs/ipython_supervisor.log' % username) 
 
