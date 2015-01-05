@@ -78,7 +78,7 @@ def user_config(username,port):
         sudo('touch /home/%s/logs/ipython_supervisor.log' % username) 
 
         # create ipython notebook profile
-        sudo('ipython profile create %s' % username)
+        sudo('ipython profile create %s' % username,user=username)
         # sudo('chmod -r {u} /home/{u}/.ipython'.format(u=username),user=root)
 
         # get hashed password
@@ -111,9 +111,10 @@ def system_config(username,port):
            use_sudo=True,
            )
 
-def system_update():
+def system_update(username):
     # supervisorctl update
     sudo('/usr/local/anaconda/bin/supervisorctl update')
+    sudo('/usr/local/anaconda/bin/supervisorctl %s restart' % username)
 
     # restart nginx
     sudo('service nginx restart')
@@ -128,4 +129,4 @@ if __name__ == '__main__':
   
     user_config(args.username,args.port)
     system_config(args.username,args.port)
-    system_update() 
+    system_update(args.username) 
