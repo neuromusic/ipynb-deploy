@@ -13,7 +13,7 @@ SUPERVISOR_CONF = "/etc/supervisor.ipython/{u}.conf"
 # template for supervisor config files
 SUPERVISOR_CONF_TEMPLATE = """
 [program:ipynb-{u}]
-command = /usr/local/anaconda/bin/ipython notebook --profile={u}
+command = /usr/bin/sg {g} "/usr/local/anaconda/bin/ipython notebook --profile={u}"
 user = {u}
 directory = /home/{u}/
 stdout_logfile = /home/{u}/logs/ipython_supervisor.log
@@ -95,12 +95,12 @@ def user_config(username,port):
                use_sudo=True,
                )
 
-def system_config(username,port):
+def system_config(username,group,port):
     # write supervisor config file
     supervisor_config_file = SUPERVISOR_CONF.format(u=username)
     backup_config(supervisor_config_file)
     append(filename=supervisor_config_file,
-           text=SUPERVISOR_CONF_TEMPLATE.format(u=username),
+           text=SUPERVISOR_CONF_TEMPLATE.format(u=username,g=group),
            use_sudo=True,
            )
     # write nginx
@@ -124,9 +124,10 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("username", help="the username to setup")
+    parser.add_argument("group", help="the user's group")
     parser.add_argument("port", help="the port this notebook will run on")
     args = parser.parse_args()
   
     user_config(args.username,args.port)
-    system_config(args.username,args.port)
+    system_config(args.username,args.group,args.port)
     system_update(args.username) 
