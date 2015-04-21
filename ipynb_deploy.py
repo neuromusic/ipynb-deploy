@@ -18,7 +18,7 @@ user = {u}
 directory = /home/{u}/
 stdout_logfile = /home/{u}/logs/ipython_supervisor.log
 redirect_stderr = true
-environment=HOME="/home/{u}"
+environment=HOME="/home/{u}",USER="{u}",MATLAB_EXECUTABLE="/usr/local/MATLAB/R2015a/bin/matlab"
 """
 
 # nginx config file location
