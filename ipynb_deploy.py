@@ -13,12 +13,12 @@ SUPERVISOR_CONF = "/etc/supervisor.ipython/{u}.conf"
 # template for supervisor config files
 SUPERVISOR_CONF_TEMPLATE = """
 [program:ipynb-{u}]
-command = /usr/local/anaconda/bin/ipython notebook --profile={u}
+command = /usr/bin/sg {g} "/usr/local/anaconda/bin/ipython notebook --profile={u}"
 user = {u}
 directory = /home/{u}/
 stdout_logfile = /home/{u}/logs/ipython_supervisor.log
 redirect_stderr = true
-environment=HOME="/home/{u}"
+environment=HOME="/home/{u}",USER="{u}",MATLAB_EXECUTABLE="/usr/local/MATLAB/R2015a/bin/matlab"
 """
 
 # nginx config file location
@@ -78,7 +78,7 @@ def user_config(username,port):
         sudo('touch /home/%s/logs/ipython_supervisor.log' % username) 
 
         # create ipython notebook profile
-        sudo('ipython profile create %s' % username)
+        sudo('ipython profile create %s' % username,user=username)
         # sudo('chmod -r {u} /home/{u}/.ipython'.format(u=username),user=root)
 
         # get hashed password
@@ -95,12 +95,12 @@ def user_config(username,port):
                use_sudo=True,
                )
 
-def system_config(username,port):
+def system_config(username,group,port):
     # write supervisor config file
     supervisor_config_file = SUPERVISOR_CONF.format(u=username)
     backup_config(supervisor_config_file)
     append(filename=supervisor_config_file,
-           text=SUPERVISOR_CONF_TEMPLATE.format(u=username),
+           text=SUPERVISOR_CONF_TEMPLATE.format(u=username,g=group),
            use_sudo=True,
            )
     # write nginx
@@ -114,7 +114,11 @@ def system_config(username,port):
 def system_update(username):
     # supervisorctl update
     sudo('/usr/local/anaconda/bin/supervisorctl update')
+<<<<<<< HEAD
     sudo('/usr/local/anaconda/bin/supervisorctl restart ipynb-%s' % username)
+=======
+    sudo('/usr/local/anaconda/bin/supervisorctl %s restart' % username)
+>>>>>>> 6ca64cb73250fde68b6a47f5955e5982c9bde288
 
     # restart nginx
     sudo('service nginx restart')
@@ -124,9 +128,15 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("username", help="the username to setup")
+    parser.add_argument("group", help="the user's group")
     parser.add_argument("port", help="the port this notebook will run on")
     args = parser.parse_args()
   
     user_config(args.username,args.port)
+<<<<<<< HEAD
     system_config(args.username,args.port)
     system_update(args.username) 
+=======
+    system_config(args.username,args.group,args.port)
+    system_update(args.username) 
+>>>>>>> 6ca64cb73250fde68b6a47f5955e5982c9bde288

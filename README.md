@@ -13,6 +13,6 @@ this script assumes a few things:
 
 run the script locally:
 
-    ipynb_config.py username 8888
+    ipynb_config.py username group 8888
     
-where `username` is the user that you are setting up a notebook for and `8888` is a unique port. Follow the prompts to login to the server with a user that has sudo priviledges. The script will also prompt you for a password for the user's ipython notebook profile.
+where `username` is the user that you are setting up a notebook for, `group` is a group for the user to run as and `8888` is a unique port. Follow the prompts to login to the server with a user that has sudo priviledges. The script will also prompt you for a password for the user's ipython notebook profile.
