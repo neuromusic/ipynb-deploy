@@ -114,11 +114,7 @@ def system_config(username,group,port):
 def system_update(username):
     # supervisorctl update
     sudo('/usr/local/anaconda/bin/supervisorctl update')
-<<<<<<< HEAD
-    sudo('/usr/local/anaconda/bin/supervisorctl restart ipynb-%s' % username)
-=======
     sudo('/usr/local/anaconda/bin/supervisorctl %s restart' % username)
->>>>>>> 6ca64cb73250fde68b6a47f5955e5982c9bde288
 
     # restart nginx
     sudo('service nginx restart')
@@ -133,10 +129,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
   
     user_config(args.username,args.port)
-<<<<<<< HEAD
-    system_config(args.username,args.port)
-    system_update(args.username) 
-=======
     system_config(args.username,args.group,args.port)
     system_update(args.username) 
->>>>>>> 6ca64cb73250fde68b6a47f5955e5982c9bde288
